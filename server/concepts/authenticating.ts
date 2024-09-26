@@ -36,7 +36,18 @@ export default class AuthenticatingConcept {
     // TODO 1: implement this operation
     //  - use this.users.readOne(..)
     //  - don't include the password (we've provided a helper function you can use!)
-    throw new Error("Not implemented!");
+    // throw new Error("Not implemented!");
+
+    // get the user by id
+    const user = await this.users.readOne({ _id });
+
+    // if user is not found, throw an error
+    if (!user) {
+      throw new NotFoundError("User is not found !");
+    }
+
+    // return the user without password
+    return this.redactPassword(user);
   }
 
   async getUsers(username?: string) {
@@ -58,7 +69,15 @@ export default class AuthenticatingConcept {
     // TODO 2: implement this operation
     //  - use this.users.partialUpdateOne(..)
     //  - maintain the invariant that usernames are unique (we've provided a helper function!)
-    throw new Error("Not implemented!");
+    // throw new Error("Not implemented!");
+
+    // assert user name is unique
+    await this.assertUsernameUnique(username);
+
+    // update the user name
+    await this.users.partialUpdateOne({ _id }, { username });
+
+    return { msg: "Username updated!" };
   }
 
   async delete(_id: ObjectId) {
